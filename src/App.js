@@ -5,8 +5,10 @@ import { Query } from 'react-apollo';
 import client from './client';
 import { SEARCH_REPOSITORIES } from './graphql';
 
+const PER_PAGE = 5;
+
 const DEFAULT_STATE = {
-  first: 5,
+  first: PER_PAGE,
   after: null,
   last: null,
   before: null,
@@ -23,6 +25,12 @@ const styles = {
     padding: 20,
     fontSize: 16,
     width: '50%'
+  },
+  resultsList: {
+    width: '60%',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    textAlign: 'left'
   }
 };
 
@@ -31,11 +39,20 @@ class App extends Component {
     super(props);
     this.state = DEFAULT_STATE;
     this.handleChange = this.handleChange.bind(this);
+    this.goNext = this.goNext.bind(this);
   }
   handleChange(event) {
     this.setState({
       ...DEFAULT_STATE,
       query: event.target.value
+    });
+  }
+  goNext(search) {
+    this.setState({
+      first: PER_PAGE,
+      after: search.pageInfo.endCursor,
+      last: null,
+      before: null
     });
   }
   render() {
@@ -59,7 +76,7 @@ class App extends Component {
                   return (
                     <React.Fragment>
                       <h2>{title}</h2>
-                      <ul>
+                      <ul style={styles.resultsList}>
                         {
                           search.edges.map(edge => {
                             const node = edge.node;
@@ -73,6 +90,15 @@ class App extends Component {
                           })
                         }
                       </ul>
+
+                      {
+                        search.pageInfo.hasNextPage === true ?
+                          <button onClick={this.goNext.bind(this, search)}>
+                            next
+                          </button>
+                          :
+                          null
+                      }
                     </React.Fragment>
                   )
                 }
