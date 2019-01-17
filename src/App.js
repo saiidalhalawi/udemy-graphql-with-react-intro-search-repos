@@ -52,10 +52,29 @@ class App extends Component {
                 ({ loading, error, data }) => {
                   if (loading) { return 'loading...' }
                   if (error) { return `Error: ${error.message}` }
-                  const repositoryCount = data.search.repositoryCount;
+                  const search = data.search;
+                  const repositoryCount = search.repositoryCount;
                   const repositoryUnit = repositoryCount === 1 ? 'Repository' : 'Repositories';
                   const title = `Github Repositories Search Results - ${repositoryCount} ${repositoryUnit}`;
-                  return <h2>{title}</h2>
+                  return (
+                    <React.Fragment>
+                      <h2>{title}</h2>
+                      <ul>
+                        {
+                          search.edges.map(edge => {
+                            const node = edge.node;
+                            return (
+                              <li key={node.id}>
+                                <a href={node.url} target="repo">
+                                  {node.name}
+                                </a>
+                              </li>
+                            )
+                          })
+                        }
+                      </ul>
+                    </React.Fragment>
+                  )
                 }
               }
             </Query>
