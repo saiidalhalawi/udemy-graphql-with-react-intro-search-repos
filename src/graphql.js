@@ -29,12 +29,13 @@ export const SEARCH_REPOSITORIES = gql`
   }
 `;
 
-
-export const ME = gql`
-  query me {
-    user(login: "saiidalhalawi") {
-      name
-      avatarUrl
+export const ADD_STAR = gql`
+  mutation addStar ($input: AddStarInput!) {
+    addStar (input: $input) {
+      starrable {
+        id
+        viewerHasStarred
+      }
     }
   }
 `;
