@@ -64,7 +64,7 @@ const DEFAULT_STATE = {
   after: null,
   last: null,
   before: null,
-  query: 'フロントエンドエンジニア'
+  query: ''
 };
 
 const styles = {
@@ -89,14 +89,15 @@ const styles = {
 class App extends Component {
   constructor(props) {
     super(props);
+    this.inputKeyword = React.createRef();
     this.state = DEFAULT_STATE;
-    this.handleChange = this.handleChange.bind(this);
     this.goNext = this.goNext.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
-  handleChange(event) {
+  handleSubmit(event) {
+    event.preventDefault();
     this.setState({
-      ...DEFAULT_STATE,
-      query: event.target.value
+      query: this.inputKeyword.current.value
     });
   }
   goPrevious(search) {
@@ -120,8 +121,9 @@ class App extends Component {
     return (
       <ApolloProvider client={client}>
         <div style={styles.main}>
-          <form>
-            <input value={query} onChange={this.handleChange} style={styles.input} />
+          <form onSubmit={this.handleSubmit}>
+            <input ref={this.inputKeyword} />
+            <input type="submit" value="submit" />
           </form>
           <div>
             <Query query={SEARCH_REPOSITORIES} variables={{ query, first, before, last, after }}>
